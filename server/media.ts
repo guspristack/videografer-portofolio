@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { setTimeout as wait } from 'node:timers/promises';
 import { FilePathSource, Input, MP4 } from 'mediabunny';
 import sharp from 'sharp';
 import { HttpError } from './http';
@@ -16,8 +17,17 @@ export async function prepareStorage() {
 }
 
 export async function discard(path: string) {
-  try { await rm(path, { force: true, maxRetries: 2, retryDelay: 100 }); }
-  catch { console.error('Berkas lama belum bisa dibersihkan.'); }
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      await rm(path, { force: true });
+      return;
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code;
+      if (!['EBUSY', 'EPERM', 'EACCES'].includes(code ?? '') || attempt === 4) break;
+      await wait(100 * (attempt + 1));
+    }
+  }
+  console.error('Berkas lama belum bisa dibersihkan.');
 }
 
 export async function readVideo(path: string) {
@@ -42,7 +52,7 @@ export async function readVideo(path: string) {
 export async function writePoster(input: string, output: string) {
   let poster: Buffer;
   try {
-    const source = sharp(input, { limitInputPixels: 30000000, failOn: 'error' });
+    const source = sharp(await readFile(input), { limitInputPixels: 30000000, failOn: 'error' });
     const { format, pages } = await source.metadata();
     if (!format || !['jpeg', 'png', 'webp'].includes(format) || (pages ?? 1) > 1) throw new Error('Unsupported poster');
     poster = await source.rotate().resize({ width: 1920, height: 1920, fit: 'inside', withoutEnlargement: true })
