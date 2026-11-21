@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../server/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Film {
+  id           Int          @id @default(autoincrement())
+  slug         String       @unique
+  name         String
+  type         String
+  description  String
+  posterAlt    String
+  placement    String
+  language     String
+  position     Int
+  published    Boolean      @default(false)
+  visualSource String
+  soundCredit  String
+  revision     Int          @default(1)
+  duration     Int          @default(0)
+  hasAudio     Boolean      @default(false)
+  videoFile    String?
+  posterFile   String?
+  captions     String       @default("")
+  credits      FilmCredit[]
+
+  @@index([published, position])
+}
+
+model FilmCredit {
+  id       Int    @id @default(autoincrement())
+  filmId   Int
+  name     String
+  role     String
+  studio   String
+  position Int
+  film     Film   @relation(fields: [filmId], references: [id], onDelete: Cascade)
+
+  @@index([filmId, position])
+}
+
+model Admin {
+  id           Int    @id
+  email        String @unique
+  passwordHash String
+}
+
+model Session {
+  sid    String   @id @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire])
+  @@map("session")
+}
