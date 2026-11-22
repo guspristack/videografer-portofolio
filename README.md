@@ -1,22 +1,29 @@
 # Bayu Pradana · Portofolio Videografer
 
-Showreel full-stack dengan studio produksi untuk persona fiktif Bayu Pradana dari Ruang Karya. Galeri publik menyediakan showreel, film unggulan, klip, dan tautan langsung ke setiap pemutar.
+Proyek portofolio full-stack untuk persona fiktif dari seri Ruang Karya karya GuspriStack.
 
-## Studio
+[Lihat demo desain di GuspriStack Showcase](https://showcase.guspriaman.com/portofolio/showreel/)
 
-- Simpan film sebagai draf, isi detailnya, dan pilih posisi showreel, film unggulan, atau klip.
-- Di tab **Media**, unggah atau ganti video MP4 H.264 (audio AAC jika ada), poster JPEG/PNG/WebP, dan takarir WebVTT UTF-8. Isi teks alternatif poster dan bahasa takarir di tab **Film**.
-- Studio membaca durasi dan keberadaan audio dari MP4 serta menyediakan pratinjau sebelum publikasi.
-- Di tab **Kredit produksi**, kelola nama, peran, studio, dan urutan tampil.
+## Fitur
 
-Batas unggahan per file adalah 100 MB untuk video, 12 MB untuk poster, dan 256 KB untuk takarir. Pemutar mendukung permintaan byte range untuk seek. PostgreSQL menyimpan metadata, takarir, kredit, dan sesi. Berkas video dan poster disimpan di `MEDIA_ROOT` (bawaan `.media`). Cadangkan direktori media bersama database agar proyek dapat dipulihkan lengkap.
+- Showreel dengan film unggulan, klip, dan halaman pemutar tiap karya.
+- Pengelolaan video MP4, poster, takarir WebVTT, dan kredit produksi.
 
-## Menjalankan secara lokal
+## Teknologi
 
-Siapkan Node.js 24 dan PostgreSQL. Salin `.env.example` ke `.env` dan isi `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_EMAIL`, dan `ADMIN_PASSWORD`. Gunakan kata sandi admin minimal 16 karakter. Perintah pertama membuat nilai acak untuk rahasia sesi.
+| Bagian | Teknologi |
+| --- | --- |
+| Bahasa | TypeScript, HTML, dan CSS |
+| Frontend | React, Vite, dan CSS Modules |
+| Backend | Node.js 24 dan Express |
+| Database | PostgreSQL dan Prisma ORM |
+| Media | MediaBunny untuk membaca metadata video |
+
+## Coba secara lokal
+
+Siapkan Node.js 24 dan database PostgreSQL lokal. Salin [.env.example](.env.example) ke `.env` dan isi koneksi database, rahasia sesi acak, serta kredensial admin lokal. Gunakan kata sandi admin dengan minimal 16 karakter.
 
 ```sh
-node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 npm ci
 npm run db:migrate
 npm run db:seed
@@ -24,11 +31,16 @@ npm run admin:provision
 npm run dev
 ```
 
-Mode pengembangan memakai [portofolio lokal](http://127.0.0.1:5180/) dan [studio admin](http://127.0.0.1:5180/admin). Pengisian awal menyediakan lima video, termasuk film pendek **Lampu terakhir** dengan takarir. `admin:provision` membuat atau mereset akun admin dan mengakhiri sesi sebelumnya.
-
-Untuk memakai hasil build lokal, atur `APP_ORIGIN=http://127.0.0.1:4180`, jalankan `npm run build`, lalu `npm start`. Frontend memakai React, Vite, TypeScript, dan CSS Modules. Express menyediakan API dan Prisma mengelola PostgreSQL.
+Buka [portofolio lokal](http://127.0.0.1:5180/) atau [panel admin](http://127.0.0.1:5180/admin). Simpan konfigurasi asli di `.env` dan data privat seperti ekspor database atau unggahan pribadi di luar repositori atau di folder `.local/`.
 
 ## Kredit
 
-- Pengembangan oleh [guspriaman](https://github.com/guspriaman) untuk [guspriStack](https://github.com/guspristack).
-- Desain portofolio, potret, poster generatif, dan animatik contoh berasal dari Ruang Karya. Kredit produksi film contoh memakai persona fiktif Bayu Pradana.
+- Pemilik dan pengembang proyek — [guspriaman](https://guspriaman.com/).
+- Studio pengembang — [GuspriStack](https://github.com/guspristack).
+- Materi contoh dari prototipe Ruang Karya — Desain showreel, potret, poster generatif, dan animatik contoh.
+
+## Lisensi
+
+Kode dan materi contoh orisinal milik guspriaman tersedia di bawah [PolyForm Noncommercial License 1.0.0](LICENSE). Anda boleh menggunakan, memodifikasi, dan membagikan materi tersebut untuk tujuan nonkomersial sesuai lisensi, dengan menyertakan [pemberitahuan hak cipta](NOTICE).
+
+Penjualan proyek atau versi modifikasinya, distribusi berbayar, dan penggunaan komersial memerlukan izin tertulis dari guspriaman. Dependensi dan aset pihak ketiga mengikuti lisensinya masing-masing.
